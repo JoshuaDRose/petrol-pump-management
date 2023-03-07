@@ -1,17 +1,18 @@
 import datetime
-import random
-from fpdf import FPDF
-import sys
-from email_pass import mail, pass_mail
-import smtplib
+from email import encoders
+from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
-from email import encoders 
-from petrol_todays_rate import petrol_rate,petrol_price
-from diesel_todays_rate import diesel_rate,diesel_price
-from CNG_todays_rate import CNG_rate, CNG_price
-from Autogas_todays_rate import autogas_rate ,autogas_price
+import random
+import smtplib
+
+from fpdf import FPDF
+
+from Autogas_todays_rate import autogas_price, autogas_rate
+from CNG_todays_rate import CNG_price, CNG_rate
+from diesel_todays_rate import diesel_price, diesel_rate
+from email_pass import mail, pass_mail
+from petrol_todays_rate import petrol_price, petrol_rate
 
 try:
     print("\t\t\t\t\tWELCOME TO DIGITAL FUEL STATION ")
