@@ -5,6 +5,7 @@ import random
 import smtplib
 import util
 import datetime
+import colorama
 
 import logging
 from logging.config import fileConfig
@@ -16,134 +17,77 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email_pass import mail, pass_mail
 
+from util import COLORS as colors, clear_screen
+
+colorama.init()
+
 fileConfig(open('config.ini'))
 logger = logging.getLogger()
 
-print(""" Digital Fuel Station ⛽
-
-1. Petrol
-2. Diesel
-3. CNG
-4. Autogas
-
-Exit (CTRL + C)
-
-""")
-
 looping = True  # 🔁
 
-while looping:
+def select_fuel(colored = False):
+    """ Ask the operartor which fuel they wish to purchase """
     choice = input(" >> ")
-    choices = ['Petrol', 'Diesel', 'CNG', 'Autogas']
+    choices = [colors['BLUE']   + 'Petrol' + colorama.Fore.RESET,
+               colors['YELLOW'] + 'Diesel' + colorama.Fore.RESET,
+               colors['MAGENTA']+ 'CNG'    + colorama.Fore.RESET,
+               colors['GREEN']  + 'Autogas'+ colorama.Fore.RESET]
+    choices_raw = ['Petrol', 'Diesel', 'CNG', 'AutoGas']
+
+    choice = choices_raw[int(choice) - 1]
+    if colored:
+        return choices[int(choice) - 1]
+    return choices_raw[int(choice) - 1]
+
+def ask_for_amount(fuel) -> float: # pyright: ignore
+    """ Ask the operator how much fuel they want to purchase """
+    util.line_break(count=1)
+    cpl = float(util.get_prices(_type=fuel)) # pyright: ignore
+    util.line_break(count=1)
+    while 1:
+        print(f"Selection: {colorama.Fore.LIGHTWHITE_EX}{fuel} {colorama.Fore.WHITE}(₹ {cpl} per. Liter){colorama.Fore.RESET}")
+        print(f"Please enter in units (Liters) how much fuel you wish to purchase {colorama.Fore.YELLOW}(maximum of 50){colorama.Fore.RESET}\n")
+
+        choice = int()
+
+        try:
+            choice = int(input(" >> "))
+        except Exception:
+            util.line_break(1)
+            continue
+
+        if choice > 50:
+            util.line_break(1)
+            continue
+        elif choice <= 0:
+            util.line_break(1)
+            continue
+
+        return cpl * choice
+
+
+while looping:
     try:
-        choice = choices[int(choice)]
-    except Exception as exception:
-        logger.critical(exception)
-        sys.exit(1)
+        util.clear_screen()
 
-    if choice in range(1,5): # 1,5 = 1, 2, 3, 4 || 1,6 = 1, 2, 3, 4, 5 etc ...
-        if (choice == 1):
-            os.system('clear')
-            print("You Have Selected PETROL")
-            fuel = 'petrol'
-            print(petrol_rate)
-            print(petrol_price)
-            amount = float(input("Enter Amount = "))
-            qauntity = amount/(petrol_price)   
-            print(f"You Got {round(qauntity)} Liters PETROL of Rs.{amount}")
-        
-        elif (choice == 2):
-            print("You Have Selected DIESEL")
-            fuel = 'Diesel'
-            print(diesel_rate)
-            print(diesel_price)
-            amount = float(input("Enter Amount = "))
-            qauntity = 0.0
-            qauntity = amount/(diesel_price)   
-            print(f"You Got {qauntity} Liters DIESEL of Rs.{amount}")
+        print(f""" Digital Fuel Station ⛽
 
-        elif (choice == 3):
-            print("You Have Selected CNG")
-            fuel = 'CNG'
-            print(CNG_rate)
-            print(CNG_price)
-            amount = float(input("Enter Amount = "))
-            qauntity = 0.0
-            qauntity = amount/(CNG_price)   
-            print(f"You Got {qauntity} Liters of CNG of Rs.{amount}")
-        
-        elif (choice == 4):
-            print("You Have Selected Autogas")
-            fuel = 'Autogas'
-            print(autogas_rate)
-            print(autogas_price)
-            amount = float(input("Enter Amount = "))
-            qauntity = 0.0
-            qauntity = amount/(autogas_price)   
-            print(f"You Got {qauntity} Liters Autogas of Rs.{amount}")
-            
-        elif (choice == 5):
-            print("EXIT...")
-    print('-'*60)
-    chc =input('Do you want your bill pdf [yes/no] : ')
-    if chc =='yes':
-        print('-'*60)
-        email =input('enter your mail address : ')
+  {colors['BLUE']} 1. Petrol
+  {colors['YELLOW']} 2. Diesel
+  {colors['MAGENTA']} 3. CNG
+  {colors['GREEN']} 4. Autogas
 
-        #current date time
-        date_time = datetime.datetime.now()
-        print(date_time)
+ {colors['RED']}Exit (CTRL + C){colorama.Fore.RESET}
 
-        #creating bill
-        bill_no = random.randint(999999,9999999)
+        """)
 
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font('Times', size=15) 
-        pdf.text(30,25,txt = f"Digital fuel Station")
-        pdf.text(30,30,txt = f"Date & Time - {date_time}")
-        pdf.text(30,35,f"Bill no - {bill_no}")
-        pdf.text(30,40,txt = f"You Got - {round(qauntity,2)} Liters {fuel}")
-        pdf.text(30,45,txt = f"Amount is - {amount}")
-        pdf.text(30,50,txt = "Thank You... Visit Again !!!")
-        bill = f"DFS {bill_no}.pdf"
-        pdf.output(bill)
-        record =("D:/petrol_pump/{bill}")
+        fuel = select_fuel(colored=False)
+    except Exception:
+        util.line_break(1)
+        continue
 
-        #send email pdf
-        
-        # Send Created Bill PDF In Gmail 
-
-        fromaddr = mail
-        pwd =  pass_mail
-        toaddr = email
-        msg = MIMEMultipart() 
-        msg['From'] = fromaddr 
-        msg['To'] = toaddr
-        msg['Subject'] = "Regarding fuel bill"
-        body = "This is auto-generated mail regarding the fuel bill"
-        msg.attach(MIMEText(body, 'plain'))
-
-        # NOTE this won't work for me on linux  :*(
-        attachment = open(f"D:/petrol_pump/{bill}", "rb")
-
-        # instance of MIMEBase and named as p
-        p = MIMEBase('application', 'octet-stream')
-
-        # To change the payload into encoded form
-        p.set_payload((attachment).read()) 
-        encoders.encode_base64(p)   
-        p.add_header('Content-Disposition', "attachment; filename= %s" % bill)
-        msg.attach(p)
-        s = smtplib.SMTP('smtp.gmail.com', 587)
-        s.starttls()
-        s.login(fromaddr,pwd) 
-        text = msg.as_string()
-        s.sendmail(fromaddr, email , text)
-        s.quit()
-        
-        print("Pdf of bill is successfully sent to your mail address")
-        break
-
-    else :
-        print("visit again ....have a nice day")
+    cost = ask_for_amount(fuel)
+    print(f"Order: {cost} Litres of {fuel}")
+    print(f"Total: {colorama.Fore.LIGHTWHITE_EX}₹{cost}{colorama.Fore.RESET}")
+    input()
