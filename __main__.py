@@ -66,28 +66,33 @@ def ask_for_amount(fuel) -> float: # pyright: ignore
 
         return cpl * choice
 
+    
+def main():
 
-while looping:
-    try:
-        util.clear_screen()
+    while looping:
+        try:
+            util.clear_screen()
 
-        print(f""" Digital Fuel Station ⛽
+            print(f""" Digital Fuel Station ⛽
 
-  {colors['BLUE']} 1. Petrol
-  {colors['YELLOW']} 2. Diesel
-  {colors['MAGENTA']} 3. CNG
-  {colors['GREEN']} 4. Autogas
+      {colors['BLUE']} 1. Petrol
+      {colors['YELLOW']} 2. Diesel
+      {colors['MAGENTA']} 3. CNG
+      {colors['GREEN']} 4. Autogas
 
- {colors['RED']}Exit (CTRL + C){colorama.Fore.RESET}
+     {colors['RED']}Exit (CTRL + C){colorama.Fore.RESET}
 
-        """)
+            """)
 
-        fuel = select_fuel(colored=False)
-    except Exception:
-        util.line_break(1)
-        continue
+            fuel = select_fuel(colored=False)
+        except Exception:
+            util.line_break(1)
+            continue
 
-    cost = ask_for_amount(fuel)
-    print(f"Order: {cost} Litres of {fuel}")
-    print(f"Total: {colorama.Fore.LIGHTWHITE_EX}₹{cost}{colorama.Fore.RESET}")
-    input()
+        cost = ask_for_amount(fuel)
+        print(f"Order: {cost} Litres of {fuel}")
+        print(f"Total: {colorama.Fore.LIGHTWHITE_EX}₹{cost}{colorama.Fore.RESET}")
+        input()
+
+if __name__ == "__main__":
+    main()
