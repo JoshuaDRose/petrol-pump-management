@@ -55,9 +55,7 @@ def ask_for_amount(fuel) -> float: # pyright: ignore
     while 1:
         print(f"Selection: {colorama.Fore.LIGHTWHITE_EX}{fuel} {colorama.Fore.WHITE}(₹ {cpl} per. Liter){colorama.Fore.RESET}")
         print(f"Please enter in units (Liters) how much fuel you wish to purchase {colorama.Fore.YELLOW}(maximum of 50){colorama.Fore.RESET}\n")
-
-        choice = int()
-
+        
         try:
             choice = int(input(" >> "))
         except Exception:
