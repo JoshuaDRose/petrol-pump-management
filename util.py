@@ -7,7 +7,9 @@ import re
 from bs4 import BeautifulSoup
 import requests
 
-fileConfig(open('config.ini', 'r'))
+config_file = open('config.ini, 'r')
+fileConfig(config_file)
+config_file.close()
 logger = logging.getLogger()
 
 colorama.init()
