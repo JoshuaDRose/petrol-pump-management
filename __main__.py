@@ -27,6 +27,12 @@ logger = logging.getLogger()
 
 looping = True  # 🔁
 
+try:
+    r = requests.get("https://www.mypetrolprice.com")
+except Exception:
+    print("Website down rip")
+    sys.exit(1)
+
 def select_fuel(colored = False):
     """ Ask the operartor which fuel they wish to purchase """
     choice = input(" >> ")
