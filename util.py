@@ -1,7 +1,8 @@
 import colorama
 import logging
 from logging.config import fileConfig
-import os,re
+import os
+import re
 
 from bs4 import BeautifulSoup
 import requests
