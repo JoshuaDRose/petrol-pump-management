@@ -10,6 +10,7 @@ import colorama
 import logging
 from logging.config import fileConfig
 
+import sys
 from fpdf import fpdf
 from email import encoders
 from email.mime.base import MIMEBase
@@ -68,6 +69,12 @@ def ask_for_amount(fuel) -> float: # pyright: ignore
 
     
 def main():
+    
+    sys.argv()
+    
+    if '--help' in sys.argv():
+        print("See README.md for help")
+        sys.exit()
 
     while looping:
         try:
